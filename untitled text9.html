@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RB Parking — Powered by VIIZE (Buttertech)</title>
+  <style>
+    :root{
+      --bg:#070a12;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.045);
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --muted2:rgba(255,255,255,.45);
+      --brand:#6366f1;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --r:22px;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(900px 520px at 20% 10%, rgba(99,102,241,.35), transparent 55%),
+        radial-gradient(900px 520px at 80% 16%, rgba(52,211,153,.20), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+    header{
+      position:sticky;top:0;z-index:50;
+      background:rgba(7,10,18,.75);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:42px;height:42px;border-radius:16px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:18px
+    }
+    .t1{font-weight:950;letter-spacing:.06em;font-size:12px}
+    .t2{font-size:11px;color:var(--muted2);margin-top:2px}
+    .pill{
+      display:inline-flex;align-items:center;gap:10px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      padding:10px 12px;border-radius:999px;
+      font-size:12px;font-weight:900;color:rgba(255,255,255,.80)
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--ok)}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      border-radius:18px;padding:12px 16px;
+      font-weight:950;font-size:13px;
+      border:1px solid rgba(255,255,255,.10);
+      transition:.15s ease;
+      user-select:none
+    }
+    .btn.primary{background:#fff;color:#0b1020;border-color:transparent}
+    .btn.primary:hover{opacity:.94}
+    .btn.ghost{background:rgba(255,255,255,.06);color:var(--text)}
+    .btn.ghost:hover{background:rgba(255,255,255,.09)}
+    .hero{padding:54px 0 26px}
+    .grid{display:grid;gap:18px}
+    @media (min-width: 980px){
+      .grid.cols2{grid-template-columns: 1.08fr .92fr;align-items:start;gap:22px}
+      .kpis{grid-template-columns:1fr 1fr}
+      .spots{grid-template-columns:repeat(4,1fr)}
+    }
+    h1{margin:14px 0 0;font-size:52px;line-height:1.02;letter-spacing:-.02em}
+    @media (max-width: 520px){h1{font-size:38px}}
+    p.lead{margin:14px 0 0;color:var(--muted);max-width:640px;font-size:16px;line-height:1.6}
+    .card{
+      border:1px solid rgba(255,255,255,.10);
+      background:var(--card);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+    }
+    .card.inset{background:var(--card2);box-shadow:none}
+    .pad{padding:18px}
+    .tag{
+      font-size:11px;font-weight:950;letter-spacing:.08em;
+      padding:7px 10px;border-radius:999px;
+      background:rgba(99,102,241,.16);
+      color:rgba(199,210,254,.96);
+      border:1px solid rgba(99,102,241,.22);
+      white-space:nowrap
+    }
+    .tag.warn{
+      background:rgba(251,191,36,.14);
+      border-color:rgba(251,191,36,.22);
+      color:rgba(253,230,138,.95);
+    }
+    .smallcap{font-size:11px;font-weight:950;letter-spacing:.14em;color:var(--muted2)}
+    .big{font-size:24px;font-weight:950;margin:6px 0 0;letter-spacing:-.01em}
+    .subline{margin-top:14px;color:var(--muted2);font-size:12px;line-height:1.5}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .kpis{display:grid;gap:14px;margin-top:16px}
+    .box{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(11,16,32,.55);
+      border-radius:18px;padding:14px
+    }
+    .box .n{font-size:38px;font-weight:950;margin-top:4px}
+    .box .u{font-size:12px;color:var(--muted2);margin-top:-2px}
+    .note{font-size:11px;color:rgba(255,255,255,.45);line-height:1.55;margin-top:8px}
+    .section{padding:20px 0 70px}
+    .h2{font-size:28px;font-weight:950;margin:0;letter-spacing:-.02em}
+    .h2sub{margin:10px 0 0;color:var(--muted);line-height:1.6}
+    .spots{display:grid;gap:12px;margin-top:16px;grid-template-columns:repeat(2,1fr)}
+    .spot{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      border-radius:18px;padding:14px
+    }
+    .spotTop{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .spotId{font-family:var(--mono);font-size:12px;color:var(--muted2)}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:11px;font-weight:950;
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.82)
+    }
+    .chip .d{width:7px;height:7px;border-radius:99px;background:currentColor;opacity:.65}
+    .chip.rep{color:#94a3b8;border-color:rgba(148,163,184,.25);background:rgba(148,163,184,.10)}
+    .chip.rt{color:#34d399;border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.10)}
+    .price{font-size:22px;font-weight:950;margin-top:10px}
+    footer{
+      border-top:1px solid var(--line);
+      background:rgba(7,10,18,.8);
+      padding:26px 0;
+      color:var(--muted2);
+      font-size:12px
+    }
+    .foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
+    iframe{width:100%;height:320px;border:0;border-radius:18px}
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <a class="brand" href="#">
+          <div class="logo">🅡🅑</div>
+          <div>
+            <div class="t1">RB PARKING</div>
+            <div class="t2">Reservations • Payments • EV ready</div>
+          </div>
+        </a>
+
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="pill" title="Availability is not yet camera-based">
+            <span class="dot"></span>
+            <span>Real-time availability: Phase 2 (camera RTSP)</span>
+          </div>
+          <a class="btn primary" href="#reserve">Test reservation →</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="grid cols2">
+          <div>
+            <div class="pill" style="margin-bottom:12px">
+              <span class="dot"></span>
+              <span>Open 24/7 • Downtown Montréal</span>
+            </div>
+
+            <h1>
+              RB Parking<br>
+              <span style="color:rgba(255,255,255,.70)">Reserve your spot in seconds.</span>
+            </h1>
+
+            <p class="lead">
+              Secure parking near Quartier Latin. Reserve, pay, and get a confirmed spot —
+              with EV charging coming soon.
+            </p>
+
+            <div class="row">
+              <a id="reserve" class="btn primary" href="https://viize-vision-parking.vercel.app/reserve" target="_blank" rel="noreferrer">
+                Test reservation →
+              </a>
+              <a class="btn ghost" href="#spots">View 20 spots</a>
+              <a class="btn ghost" href="#map">View map</a>
+            </div>
+
+            <div class="subline">
+              Address: <b style="color:rgba(255,255,255,.82)">1439 Rue Saint-Timothée, Montréal, QC H2L 3N7</b><br>
+              Platform fee: <b style="color:rgba(255,255,255,.82)">5% (Buttertech)</b> • Processing fees: <b style="color:rgba(255,255,255,.82)">Interac / Stripe</b>
+            </div>
+
+            <div class="kpis">
+              <div class="box">
+                <div class="smallcap">SPOTS</div>
+                <div class="n">20</div>
+                <div class="u">available to list now</div>
+              </div>
+              <div class="box">
+                <div class="smallcap">EV CHARGERS</div>
+                <div class="n">Soon</div>
+                <div class="u">installation in progress</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: POC CARD -->
+          <div class="card pad">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+              <div>
+                <div class="smallcap">POC STATUS</div>
+                <div class="big">Launch checklist</div>
+                <div class="note">Keep this honest until RTSP occupancy goes live.</div>
+              </div>
+              <div class="tag warn">POC</div>
+            </div>
+
+            <div class="card inset pad" style="margin-top:14px">
+              <div style="display:grid;gap:10px">
+                <div>✅ Add RB Parking page (this page)</div>
+                <div>✅ List 20 real spots</div>
+                <div>✅ Send owner a personalized link</div>
+                <div>🔜 1 test booking + payment flow</div>
+                <div>🔜 Phase 2: RTSP camera → occupancy detection</div>
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:14px">
+              <a class="btn primary" style="width:100%" href="https://viize-vision-parking.vercel.app/reserve" target="_blank" rel="noreferrer">
+                Run a test reservation →
+              </a>
+            </div>
+
+            <div class="note">
+              Availability label: <b>“Reported availability”</b> now, then upgrade to <b>“Real-time (camera RTSP)”</b>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAP -->
+    <section id="map" class="section">
+      <div class="wrap">
+        <h2 class="h2">Location</h2>
+        <p class="h2sub">Near Cabaret Mado / Quartier Latin. Open 24/7.</p>
+
+        <div class="card pad" style="margin-top:14px">
+          <!-- Replace the embed if you want a different view -->
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!4v1772088050639!6m8!1m7!1soXrpldCusooivklODmdlNg!2m2!1d45.51735097499155!2d-73.55822337370365!3f29.422028!4f0!5f0.7820865974627469"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+          <div class="note">
+            Note: Google embed is for location preview only. Reservations happen on VIIZE.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPOTS -->
+    <section id="spots" class="section">
+      <div class="wrap">
+        <h2 class="h2">Available spots (20)</h2>
+        <p class="h2sub">
+          Current status is <b>Reported availability</b>. Real-time occupancy becomes available in Phase 2 via RTSP cameras.
+        </p>
+
+        <div class="spots" id="spotsGrid"></div>
+
+        <div class="row" style="margin-top:16px">
+          <span class="chip rep"><span class="d"></span>REPORTED AVAILABILITY (NOW)</span>
+          <span class="chip rt"><span class="d"></span>REAL-TIME (PHASE 2: CAMERA RTSP)</span>
+        </div>
+
+        <div class="note">
+          Tip: once RTSP is connected, you can safely change the green dot to real-time occupancy.
+        </div>
+      </div>
+    </section>
+
+    <!-- EV COMING SOON -->
+    <section class="section">
+      <div class="wrap">
+        <div class="card pad">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap">
+            <div>
+              <div class="smallcap">EV CHARGING</div>
+              <div class="big">EV chargers coming soon</div>
+              <div class="subline">
+                When chargers go live, this page can show power (kW) + estimated range (km) in real time.
+              </div>
+            </div>
+            <div class="tag">EV READY</div>
+          </div>
+          <div class="row" style="margin-top:14px">
+            <a class="btn primary" href="https://viize-vision-parking.vercel.app/reserve" target="_blank" rel="noreferrer">Reserve →</a>
+            <a class="btn ghost" href="#map">Directions</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div style="font-weight:950;color:rgba(255,255,255,.80)">RB Parking • Powered by VIIZE (Buttertech)</div>
+        <div>Platform fee: 5% • Payments: Interac / Stripe • Real-time availability: Phase 2 (camera RTSP)</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ---- Configure (easy edits) ----
+    const RESERVE_LINK = "https://viize-vision-parking.vercel.app/reserve";
+
+    // Spots: create 20 items with a simple pricing placeholder.
+    // Replace price logic later with dynamic pricing / inventory rules.
+    const basePrice = 18.00; // CAD (placeholder)
+    const spots = Array.from({length:20}).map((_, i) => {
+      const id = String(i+1).padStart(2,"0");
+      return {
+        code: `#${id}`,
+        type: "Standard",
+        // "reported" now; later you can set real-time availability from camera occupancy
+        availability: "reported",
+        price: basePrice + (i % 3) * 1.25
+      };
+    });
+
+    function money(n){ return `$${n.toFixed(2)} CAD`; }
+
+    const grid = document.getElementById("spotsGrid");
+    grid.innerHTML = spots.map(s => `
+      <div class="spot">
+        <div class="spotTop">
+          <div>
+            <div class="spotId">${s.type}</div>
+            <div style="font-size:28px;font-weight:950;margin-top:6px">${s.code}</div>
+          </div>
+          <span class="chip rep" title="Not yet camera-based"><span class="d"></span>REPORTED</span>
+        </div>
+
+        <div class="price">${money(s.price)}</div>
+        <div class="note">Availability: reported (Phase 2: RTSP camera → real-time)</div>
+
+        <div class="row" style="margin-top:12px">
+          <a class="btn primary" style="width:100%" href="${RESERVE_LINK}" target="_blank" rel="noreferrer">Reserve this spot →</a>
+        </div>
+      </div>
+    `).join("");
+  </script>
+</body>
+</html>
