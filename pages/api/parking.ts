@@ -1,40 +1,35 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from "../../lib/prisma"
+import { NextApiRequest, NextApiResponse } from 'next'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { slug } = req.query
-  if (typeof slug !== 'string') return res.status(400).json({ error: "Slug required" })
-
   try {
-    const lot = await prisma.parkingLot.findUnique({
-      where: { slug },
-      include: { 
-        spots: {
-          include: { _count: { select: { reservations: true } } }
-        } 
-      },
+    const spots = await prisma.spot.findMany({
+      include: { reservations: true }
     })
 
-    if (!lot) return res.status(404).json({ error: "Parking lot not found" })
+    const totalSpots = spots.length
+    const occupiedSpots = spots.filter(s => s.reservations.length > 0).length
+    const occupancyRate = occupiedSpots / totalSpots
 
-    // Logique de prix dynamique (Heffa Scalable Logic)
-    // Multiplicateur basé sur l'occupation simulée ou réelle
-    const demandMultiplier = 1.5 
+    // Multiplicateur : Prix x1 à 0% d'occupation, x2 à 100%
+    const demandMultiplier = 1 + occupancyRate
 
     const response = {
-      name: lot.name,
-      platformFeePercent: lot.platformFeeBps / 100,
-      spots: lot.spots.map(s => ({
+      occupancy: Math.round(occupancyRate * 100),
+      revenueCents: spots.reduce((acc, s) => acc + (s.reservations.length * s.basePriceCents), 0),
+      spots: spots.map(s => ({
         id: s.id,
         code: s.code,
-        // Prix dynamique calculé au vol
+        type: s.type,
         finalPriceCents: Math.round(s.basePriceCents * demandMultiplier),
-        isAvailable: true // Logique à étendre selon les dates
+        isAvailable: s.reservations.length === 0
       }))
     }
 
     res.status(200).json(response)
   } catch (error) {
-    res.status(500).json({ error: "Database connection failed" })
+    res.status(500).json({ error: "Database error", details: error })
   }
 }

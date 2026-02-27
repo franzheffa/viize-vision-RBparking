@@ -18,7 +18,8 @@ model ParkingLot {
 
 model Spot {
   id             String        @id @default(cuid())
-  code           String
+  code           String        @unique
+  type           String        @default("Standard")
   basePriceCents Int
   parkingLotId   String
   parkingLot     ParkingLot    @relation(fields: [parkingLotId], references: [id])
