@@ -1,42 +1,49 @@
-import { useEffect,useState } from "react"
+import React, { useEffect, useState } from 'react';
 
-export default function RB(){
-  const [data,setData]=useState<any>(null)
+export default function RBParking() {
+  const [spots, setSpots] = useState([]);
+  const [stats, setStats] = useState({ occupancy: 0, revenue: 0 });
 
-  useEffect(()=>{
-    fetch("/api/parking?slug=rb-parking")
-      .then(r=>r.json())
-      .then(setData)
-  },[])
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch('/api/parking');
+      const data = await res.json();
+      setSpots(data.spots);
+      setStats({ occupancy: data.occupancy, revenue: data.revenueCents / 100 });
+    };
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
-  if(!data) return <div style={{padding:40}}>Loading...</div>
+  return (
+    <div className="min-h-screen bg-[#070a12] text-white p-6 font-sans">
+      <header className="flex justify-between items-center mb-8 border-b border-white/10 pb-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tighter">RB PARKING × VIIZE</h1>
+          <p className="text-gray-500 text-sm font-mono">Instance: Quartier Latin / Montreal</p>
+        </div>
+        <div className="text-right">
+          <div className="text-xs text-gray-500 uppercase">Revenue Est.</div>
+          <div className="text-2xl font-black text-indigo-400">{stats.revenue.toFixed(2)} CAD</div>
+        </div>
+      </header>
 
-  return(
-    <div style={{background:"#070a12",minHeight:"100vh",color:"#fff",padding:40,fontFamily:"system-ui"}}>
-      <h1>RB Parking</h1>
-      <p>Reserve your spot in seconds.</p>
-      <p>Platform fee: {data.platformFeePercent}%</p>
-
-      <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:20,marginTop:30}}>
-        {data.spots.map((s:any)=>(
-          <div key={s.id} style={{background:"rgba(255,255,255,.05)",padding:20,borderRadius:12}}>
-            <h2>{s.code}</h2>
-            <p>${(s.finalPriceCents/100).toFixed(2)} CAD</p>
-            <button
-              style={{padding:10,background:"#fff",color:"#000",borderRadius:8}}
-              onClick={()=>reserve(s.id)}
-            >
-              Reserve →
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {spots.map((spot: any) => (
+          <div key={spot.id} className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-all">
+            <div className="flex justify-between items-start mb-4">
+              <span className="text-[10px] font-bold bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded">{spot.type}</span>
+              <div className={`w-2 h-2 rounded-full ${spot.isAvailable ? 'bg-emerald-400 shadow-[0_0_10px_#34d399]' : 'bg-amber-400'}`}></div>
+            </div>
+            <div className="text-2xl font-black mb-1">{spot.code}</div>
+            <div className="text-lg font-mono text-gray-300">{(spot.finalPriceCents / 100).toFixed(2)}$</div>
+            <button className="w-full mt-4 py-2 bg-white/5 border border-white/20 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white text-black transition-colors">
+              Réserver
             </button>
           </div>
         ))}
       </div>
     </div>
-  )
-
-  async function reserve(spotId:string){
-    const r=await fetch("/api/reserve",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({spotId})})
-    const j=await r.json()
-    alert("Reservation created: "+j.reference)
-  }
+  );
 }
