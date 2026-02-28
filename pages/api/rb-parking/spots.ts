@@ -3,35 +3,30 @@ import { prisma } from "../../../lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // On cherche le lot par son slug unique
     const lot = await prisma.parkingLot.findUnique({
       where: { slug: "rb-parking" },
-      include: { 
-        spots: { 
-          orderBy: { code: 'asc' },
-          include: { reservations: true } 
-        } 
-      }
+      include: { spots: { include: { reservations: true } } }
     });
 
     if (!lot) {
-      return res.status(404).json({ success: false, error: "Parking 'rb-parking' non configuré dans la DB" });
+      // Si le lot n'existe pas, on renvoie une erreur explicite
+      return res.status(200).json({ 
+        success: false, 
+        error: "DATABASE_EMPTY: Le parking 'rb-parking' n'existe pas dans la base." 
+      });
     }
-
-    const formattedSpots = lot.spots.map(s => ({
-      id: s.id,
-      code: s.code,
-      finalPriceCents: s.basePriceCents || 1800,
-      isAvailable: s.reservations.length === 0
-    }));
 
     return res.status(200).json({
       success: true,
       name: lot.name,
-      spots: formattedSpots
+      spots: lot.spots.map(s => ({
+        id: s.id,
+        code: s.code,
+        finalPriceCents: s.basePriceCents,
+        isAvailable: s.reservations.length === 0
+      }))
     });
-  } catch (error) {
-    console.error("RB-API ERROR:", error);
-    return res.status(500).json({ success: false, error: "Database Connection Error" });
+  } catch (error: any) {
+    return res.status(500).json({ success: false, error: error.message });
   }
 }
