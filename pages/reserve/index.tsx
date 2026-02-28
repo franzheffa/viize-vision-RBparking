@@ -5,14 +5,17 @@ import { SpotCard } from '../../components/SpotCard';
 export default function ReservePage() {
   const [spots, setSpots] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/rb-parking/spots')
       .then(res => res.json())
       .then(data => {
-        if (data.success) setSpots(data.spots);
-        else setError("Failed to load spots");
+        if (data.success) {
+          setSpots(data.spots);
+        } else {
+          setError("Failed to load spots");
+        }
       })
       .catch(() => setError("Connection error"))
       .finally(() => setLoading(false));
@@ -33,6 +36,7 @@ export default function ReservePage() {
           </p>
 
           {loading && <div className="animate-pulse text-blue-400 font-mono">CHARGEMENT...</div>}
+          {error && <div className="text-red-500 font-mono border border-red-500/20 p-4 rounded-xl bg-red-500/5">ERREUR: {error}</div>}
           
           {!loading && !error && (
             <div 
