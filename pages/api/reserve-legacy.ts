@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
  * Backward-compat placeholder.
- * Your main app already has its own parking endpoints.
  */
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
   return res.status(200).json({ ok: true });
